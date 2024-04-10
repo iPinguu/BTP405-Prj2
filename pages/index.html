@@ -7,16 +7,26 @@
 </head>
 
 <body>
+    
+    <div style="position: absolute; left: 2%">
+        <h2>Restaurant Reservation System</h2>
+    </div>
+    
     <div class="outer" style="position: absolute; left: 50%; top: 30%; width: 200px; height: 100px; margin-left: -100px;">
         <div class="inner" style="height: 800px; width: 1200px;">
             <form class="loginForm" action="/login-user" method="POST" style="width: 20%; border: solid; border-width: thin; padding: 15px;">
                 <h4>Login</h4>
     
                 <label>Name: </label>
-                <input type="text" placeholder="userName" style="margin-bottom: 10px; display: block;">
+                <input type="text" placeholder="User Name" name="username" required style="margin-bottom: 10px; display: block;">
                 
                 <label>Password: </label>
-                <input type="text" placeholder="Password" style="margin-bottom: 10px; display: block;">
+                <input type="password" placeholder="Password" name="userPwd" required style="margin-bottom: 10px; display: block;">
+
+                <a href="/register-user" style="font-size: 80%;">Create Account</a>
+                
+                <br />
+                <br />
                 
                 <button>Login</button>
             </form>
