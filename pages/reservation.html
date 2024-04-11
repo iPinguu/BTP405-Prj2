@@ -8,7 +8,7 @@
 <body>
     <div class="outer" style="position: absolute; left: 50%; top: 30%; width: 200px; height: 100px; margin-left: -100px;">
         <div class="inner" style="height: 800px; width: 1200px;">
-            <form class="loginForm" action="" style="width: 20%; border: solid; border-width: thin; padding: 15px;">
+            <form class="loginForm" action="reserve-slot" style="width: 20%; border: solid; border-width: thin; padding: 15px;">
                 <h4>Reservation</h4>
     
                 <label>Name: </label>
@@ -18,7 +18,7 @@
                 <input type="text" placeholder="mm/dd/yyyy" style="margin-bottom: 10px; display: block;">
 
                 <label>Number of Guests: </label>
-                <input type="number"  style="margin-bottom: 10px; display: block;">
+                <input type="number" min=0 placeholder="number" style="margin-bottom: 10px; display: block;">
                 
                 <button>Reserve Slot</button>
             </form>

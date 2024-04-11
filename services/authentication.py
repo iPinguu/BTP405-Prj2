@@ -19,14 +19,12 @@ def authenticateUser(user, pwd):
         response = {"result": json.load(json_util(dict(dbConn)))}
 
         if(isEmpty):
-            enteredPwd = hash.serializePassword(pwd)
             
-            if(enteredPwd == response.password):
+            if(hash.checkPwd(pwd, response.password)):
                 return True     
             else:
                 raise Exception("Wrong password entered!") 
         else:
             return False
-
     except Exception as e:
         print(f'[Authentication Debugging]: guh, error: {e}')

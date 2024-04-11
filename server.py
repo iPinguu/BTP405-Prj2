@@ -2,7 +2,8 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs
 import json
 
-import services.authentication as authenLib 
+import services.authentication as authenLib
+import services.registerUser 
 
 PORTNUM = 8080
 
@@ -32,6 +33,13 @@ class RequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             with open('./pages/register-user.html', 'rb') as file:
+                self.wfile.write(file.read())
+
+        if self.path == "/reservation":
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            with open('./pages/reservation.html', 'rb') as file:
                 self.wfile.write(file.read())
     
     def do_POST(self):
@@ -63,6 +71,30 @@ class RequestHandler(BaseHTTPRequestHandler):
             
             except Exception as e:
                 print(e)
+    
+        if self.path == "/new-user":
+            content_length = int(self.headers['Content-Length'])
+            postData = self.rfile.read(content_length)
+            formData = parse_qs(postData)
+            
+            name = formData.get('userName', [''])[0]
+            passWord = formData.get('userPwd', [''])[0]
+            email = formData.get('email', [''])[0]
+            
+            try:
+                if services.registerUser(name, email, passWord):
+                    with open('./pages/reservation.html', 'rb') as file:
+                            self.wfile.write(file.read())
+                else:
+                    with open('./pages/index.html', 'rb') as file:
+                            self.wfile.write(file.read())
+            except Exception as e:
+                print(e)
+
+        #TODO: Reserve logic
+        #TODO: Update logic
+        #TODO: Delete Logic / endpoint
+
 
 
 

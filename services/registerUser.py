@@ -1,5 +1,5 @@
 import database.dbConn as dbConn
-import hashPassword as hash
+from . import hashPassword as hash
 import json
 
 
@@ -8,16 +8,18 @@ users = db['Restaurant']['users']
 
 class userSchema:
     
-    def __init__(self, name=None, email=None, password=None):
+    def __init__(self, name=None, email=None, password=None, role=None):
         self.name = name
         self.email = email
         self.password = password
+        self.role = role
 
     def to_dict(self):
         return {
             "name": self.name,
             "email": self.name,
-            "password": self.password
+            "password": self.password,
+            "role": self.role
         }
 
 def registerUser(userName, userEmail, userPwd):
@@ -39,7 +41,8 @@ def registerUser(userName, userEmail, userPwd):
                 password = encryptedPwd,
             )
 
-            users.insert_one({newUser})
+            users.insert_one(newUser)
+            return True
             
         else:
             raise Exception("User already exists!")
@@ -47,3 +50,4 @@ def registerUser(userName, userEmail, userPwd):
 
     except Exception as e:
         print(f'[Authentication Debugging]: guh, error: {e}')
+        return False
