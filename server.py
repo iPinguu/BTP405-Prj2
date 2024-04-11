@@ -1,7 +1,6 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from bson import json_util
+from urllib.parse import parse_qs
 import json
-import requests
 
 import services.authentication as authenLib 
 
@@ -9,6 +8,16 @@ PORTNUM = 8080
 
 class RequestHandler(BaseHTTPRequestHandler):
 
+    def reqData(reqData):
+        content_length = int(reqData.headers['Content-Length'])
+        body = reqData.rfile.read(content_length)
+        data = json.loads(body.decode('utf-8'))
+        
+        reqData.name = data.get('name')
+        reqData.email = data.get('email')
+        reqData.password = data.get('password')
+    
+    
     def do_GET(self):
         
         if self.path == '/':
@@ -28,24 +37,33 @@ class RequestHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/login-user":
 
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
+            content_length = int(self.headers['Content-Length'])
+            postData = self.rfile.read(content_length)
+            formData = parse_qs(postData)
 
-            form_userName = requests.inputForm[userName]
-            form_userPwd = requests.inputForm[userPwd]
-            
-            
-            if(authenLib.authenticateUser(form_userName, form_userPwd)):
-                with open('./pages/reservation.html', 'rb') as file:
-                    self.wfile.write(file.read())
-    
-    def do_POST(self):
+            name = formData.get('userName', [''])[0]
+            passWord = formData.get('userPwd', [''])[0]
 
-        if self.path == "/register-user":
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
+            try:
+                
+                if(authenLib.authenticateUser(name, passWord)):
+                    self.send_response(200)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    
+                    with open('./pages/reservation.html', 'rb') as file:
+                        self.wfile.write(file.read())
+                else:
+                    print("not registered")
+                    self.send_response(404)
+                    self.send_header('Content-type', 'text/html')
+                    self.end_headers()
+                    with open('./pages/index.html', 'rb') as file:
+                        self.wfile.write(file.read())
+            
+            except Exception as e:
+                print(e)
+
 
 
         

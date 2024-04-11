@@ -1,14 +1,11 @@
-import sys 
-sys.path.insert(1, './database')
+from bson import json_util
+import json
 
-import dbConn
+import database.dbConn as dbConn
+from . import hashPassword as hash
 
-def registerUser(user, pwd):
-    """
-        Registers user to the database
-    """
-
-    # TODO: do register logic (create new document in db)
+db = dbConn.mongoConnection()
+users = db['Restaurant']['users']
 
 
 def authenticateUser(user, pwd):
@@ -16,6 +13,20 @@ def authenticateUser(user, pwd):
         Checks if user exists in the databse
     """
 
-    # TODO: do authetication logic (check if user exists in db)
-    print(f'[Authentication Log] User: {user}\n')
-    print(f'[Authentication Log] Password: {pwd}\n')
+    try:
+        dbQuery = users.find_one(user)
+        isEmpty = len(list(dbQuery))
+        response = {"result": json.load(json_util(dict(dbConn)))}
+
+        if(isEmpty):
+            enteredPwd = hash.serializePassword(pwd)
+            
+            if(enteredPwd == response.password):
+                return True     
+            else:
+                raise Exception("Wrong password entered!") 
+        else:
+            return False
+
+    except Exception as e:
+        print(f'[Authentication Debugging]: guh, error: {e}')
